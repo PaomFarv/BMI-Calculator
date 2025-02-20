@@ -18,10 +18,7 @@ def label_vanish():
     result_pop.configure(text="")
 
 def bmi_calc():
-    height = height_inp.get()
-    weight = weight_inp.get()
-
-    if height.isdigit() and weight.isdigit():
+    try:
         height = float(height_inp.get())
         weight = float(weight_inp.get())
     
@@ -41,7 +38,7 @@ def bmi_calc():
 
         bmi = round(weight/height**2,2)
         result_pop.configure(text=f"BMI is: {bmi}")
-    else:
+    except ValueError:
         result_pop.configure(text="No Valid Input Found.")
         app.after(3000,label_vanish)
         return
