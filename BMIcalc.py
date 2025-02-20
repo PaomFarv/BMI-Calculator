@@ -4,31 +4,7 @@ from PIL import Image
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme('green')
 
-def bmi_calc():
-    height = float(height_inp.get())
-    weight = float(weight_inp.get())
-
-    unit1 = height_unit.get()
-    unit2 = weight_unit.get()
-
-    if unit2 == "lb":
-        weight = weight*0.45359237
-
-    if unit1 == "cm":
-        height = height/100
-    elif unit1 == "inch":
-        height = (height*2.54)/100
-    else:
-        pass
-
-    bmi = round(weight/height**2,2)
-    result_pop.configure(text=f"BMI is: {bmi}")
-
-def home():
-    global weight_inp, weight_unit, height_inp, height_unit, result_pop
-    for widget in main_frame.winfo_children():
-        widget.destroy()
-
+def create_header(master):
     header_frame = ctk.CTkFrame(master=main_frame,fg_color="transparent")
     header_frame.pack(pady=40)
 
@@ -38,6 +14,45 @@ def home():
     headline2 = ctk.CTkLabel(master=header_frame,text="CALC.",font=("Arial Black",45))
     headline2.pack(side='right',padx=5)
 
+def label_vanish():
+    result_pop.configure(text="")
+
+def bmi_calc():
+    height = height_inp.get()
+    weight = weight_inp.get()
+
+    if height.isdigit() and weight.isdigit():
+        height = float(height_inp.get())
+        weight = float(weight_inp.get())
+    
+        unit1 = height_unit.get()
+        unit2 = weight_unit.get()
+
+        if unit2 == "lb":
+            weight = weight*0.45359237
+        if unit1 == "cm":
+            height = height/100
+        elif unit1 == "inch":
+            height = (height*2.54)/100
+        else:
+            result_pop.configure(text="No Unit Selected.")
+            app.after(3000,label_vanish)
+            return
+
+        bmi = round(weight/height**2,2)
+        result_pop.configure(text=f"BMI is: {bmi}")
+    else:
+        result_pop.configure(text="No Valid Input Found.")
+        app.after(3000,label_vanish)
+        return
+    
+def home():
+    global weight_inp, weight_unit, height_inp, height_unit, result_pop
+    for widget in main_frame.winfo_children():
+        widget.destroy()
+
+    create_header(master=main_frame)
+    
     weight_frame = ctk.CTkFrame(master=main_frame,fg_color="transparent")
     weight_frame.pack()
 
@@ -88,14 +103,7 @@ app.iconbitmap("bmicalc.ico")
 main_frame = ctk.CTkFrame(master=app,border_width=1)
 main_frame.pack(expand=True, fill="both", padx=20, pady=20)
 
-header_frame = ctk.CTkFrame(master=main_frame,fg_color="transparent")
-header_frame.pack(pady=40)
-
-headline1 = ctk.CTkLabel(master=header_frame,text="BMI",font=("Arial Black",45,"bold"),text_color="#3CB47E")
-headline1.pack(side='left',padx=5)
-
-headline2 = ctk.CTkLabel(master=header_frame,text="CALC.",font=("Arial Black",45))
-headline2.pack(side='right',padx=5)
+create_header(master=main_frame)
 
 weight_frame = ctk.CTkFrame(master=main_frame,fg_color="transparent")
 weight_frame.pack()
@@ -129,3 +137,7 @@ chart_btn = ctk.CTkButton(master=main_frame,text="BMI Scale Guide",fg_color="tra
 chart_btn.pack(pady=10)
 
 app.mainloop()
+
+#Do the ERROR HANDLING
+#create a header function
+#look for areas of improvements
